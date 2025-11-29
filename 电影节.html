@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电影节 The injuries beneath the uniform</title>
+
+<style>
+body{
+    font-family:sans-serif;
+    margin:0;
+    padding:0;
+    background:linear-gradient(135deg,#1a1a2e,#162447,#1f4068,#e43f5a);
+    color:#fff;
+    min-height:100vh;
+}
+
+/* 手机标题 */
+header{
+    text-align:center;
+    padding:20px 0;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(5px);
+    border-bottom:2px solid #fff;
+}
+h1{
+    margin:0;
+    font-size:22px;
+}
+h2{
+    font-size:20px;
+}
+
+/* 内容区域 */
+section{
+    padding:20px;
+}
+
+/* 卡片更适合手机 */
+.card{
+    background:rgba(255,255,255,0.08);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+/* 媒体宽度手机适配 */
+.video, .poster{
+    width:100%;
+    border-radius:10px;
+}
+
+/* 按钮更大更好点 */
+button{
+    padding:12px 26px;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(90deg,#ffcc00,#ffaa00);
+    color:#111;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+/* 转盘容器 */
+#wheel-container{
+    position:relative;
+    display:inline-block;
+    width:260px;
+    height:260px;
+}
+
+/* 让转盘自动适配 */
+#wheel{
+    width:260px;
+    height:260px;
+}
+
+/* 箭头大小改为手机更明显 */
+#wheel-arrow{
+    position:absolute;
+    top:-5px;
+    left:50%;
+    width:0;
+    height:0;
+    border-left:12px solid transparent;
+    border-right:12px solid transparent;
+    border-bottom:24px solid #ff6b6b;
+    transform:translateX(-50%);
+}
+
+/* 抽取图片展示 */
+.gallery img{
+    width:100%;
+    margin-top:15px;
+    border-radius:10px;
+}
+
+/* 手机排版：人物卡片标题更小 */
+.card h3{
+    margin:0 0 10px 0;
+    font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>电影节 The injuries beneath the uniform</h1>
+</header>
+
+<section>
+<h2>预告片</h2>
+<div class="card">
+<video class="video" controls poster="images/trailer-poster.jpg">
+<source src="videos/trailer.mp4" type="video/mp4">
+</video>
+</div>
+</section>
+
+<section>
+<h2>电影</h2>
+<div class="card">
+<h3>电影标题示例</h3>
+<img class="poster" src="images/film1.jpg">
+<video class="video" controls>
+<source src="videos/film1.mp4" type="video/mp4">
+</video>
+</div>
+</section>
+
+<section>
+<h2>花絮</h2>
+<div class="card">
+<video class="video" controls>
+<source src="videos/bts.mp4" type="video/mp4">
+</video>
+</div>
+</section>
+
+<section>
+<h2>随机图片抽取</h2>
+<div class="card" style="text-align:center">
+<div id="wheel-container">
+<canvas id="wheel" width="300" height="300"></canvas>
+<div id="wheel-arrow"></div>
+</div><br>
+<button onclick="spin()">开始抽取</button>
+<div id="galleryBox"></div>
+</div>
+</section>
+
+<section>
+<h2>人物介绍</h2>
+
+<div class="card">
+<h3>导演：董亿点</h3>
+<p>知名导演，擅长科幻与剧情类电影，获得多项国际奖项。</p>
+</div>
+
+<div class="card">
+<h3>主演：Allison</h3>
+<p>青年演员，凭借多部优秀作品获得极高人气。</p>
+</div>
+
+<div class="card">
+<h3>摄影：Kate</h3>
+<p>资深摄影师，擅长光影捕捉与视觉设计。</p>
+</div>
+
+<div class="card">
+<h3>编剧：Blues</h3>
+<p>才华编剧，创作多部广受欢迎的电影剧本。</p>
+</div>
+
+<div class="card">
+<h3>音乐：Elena</h3>
+<p>电影配乐作曲家，擅长情绪氛围与沉浸式音乐创作。</p>
+</div>
+</section>
+
+<script>
+let imgs=["images/p1.jpg","images/p2.jpg","images/p3.jpg","images/p4.jpg","images/p5.jpg",
+          "images/p6.jpg","images/p7.jpg","images/p8.jpg","images/p9.jpg","images/p10.jpg"];
+
+let angle=0,speed=0,spinning=false;
+const wheel=document.getElementById("wheel");
+const ctx=wheel.getContext("2d");
+
+function drawWheel(){
+    let per=2*Math.PI/10;
+    ctx.clearRect(0,0,300,300);
+    for(let i=0;i<10;i++){
+        ctx.beginPath();
+        ctx.fillStyle=i%2?"#666":"#888";
+        ctx.moveTo(150,150);
+        ctx.arc(150,150,150,per*i+angle,per*(i+1)+angle);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(150,150);
+        ctx.rotate(per*(i+0.5)+angle);
+        ctx.fillStyle="#fff";
+        ctx.font="16px sans-serif";
+        ctx.fillText("图"+(i+1),60,5);
+        ctx.restore();
+    }
+}
+
+function spin(){
+    if(spinning) return;
+    spinning=true;
+    speed=0.3;
+    animate();
+}
+
+function animate(){
+    angle+=speed;
+    speed*=0.98;
+    drawWheel();
+    if(speed<0.01){
+        spinning=false;
+        let i=Math.floor(((2*Math.PI-angle)%(2*Math.PI))/(2*Math.PI/10));
+        showImg((10-i)%10);
+        return;
+    }
+    requestAnimationFrame(animate);
+}
+
+function showImg(i){
+    document.getElementById("galleryBox").innerHTML=
+        `<img src="${imgs[i]}" alt="抽选图片">`;
+}
+
+drawWheel();
+</script>
+
+</body>
+</html>
